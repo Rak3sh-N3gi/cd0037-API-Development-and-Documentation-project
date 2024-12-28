@@ -265,7 +265,13 @@ def create_app(test_config=None):
 
     @app.errorhandler(400)
     def bad_request(error):
-        return (jsonify({"success": False, "err(or": 400, "message": "bad request"}), 
+        return (jsonify({"success": False, "error": 400, "message": "bad request"}), 
+        400,
+    )
+
+    @app.errorhandler(500)
+    def server_error(error):
+        return (jsonify({"success": False, "error": 500, "message": "Server error"}), 
         400,
     )
     return app
