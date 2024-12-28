@@ -71,6 +71,124 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 
 You will need to provide detailed documentation of your API endpoints including the URL, request parameters, and the response body. Use the example below as a reference.
 
+`GET '/categories'`
+
+- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Request Arguments: None
+- Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs.
+
+```json
+{
+  "1": "Science",
+  "2": "Art",
+  "3": "Geography",
+  "4": "History",
+  "5": "Entertainment",
+  "6": "Sports"
+}
+```
+`GET '/questions'`
+`GET '/questions?page=1'`
+
+- Fetches a list of 10 questions which are ordered by question id.
+- Request Arguments: None
+- Returns: An object with , `questions` - at max 10 questions based on page value, 'total_questions' : total questions in table, 'categories' : all categories of questions, 'current_categories' : default value as 1
+
+```json
+{
+  "questions": [{"Which movie Tom hanks got oscar award ?"},{" What was the master piece of Picaso ?"}],
+  "total_questions": 2,
+  "categories": {"Science","Art"},
+  "current_category": 1
+}
+```
+
+`DELETE '/questions/<int:question_id>'`
+- Deletes a question based on question id.
+- Request Arguments: question_id in URL
+- Returns: An object with , `success` : state of rquest, 'deleted' : id of question deleted
+    ```json
+    {
+      "success": "True",
+      "deleted": 1
+    }
+    ```
+- Failure: 404 if no question returned for the question id.
+
+`POST '/questions/add'`
+- Add a new question..
+- Request Arguments: An object with 'question' - Question to be stored, 'answer' - Answer of the question to be stored, 'difficulty' - difficulty of the question ranging 1-5, 'category' - category id based on the categories stored in the table.
+    ```json
+    {
+      "question": "True",
+      "answer": 1,
+      "difficulty": 1,
+      "category": 1
+    }
+    ```
+- Returns: An object with , `success` : state of rquest, 'created' : id of question added
+    ```json
+    {
+      "success": "True",
+      "created": 1
+    }
+    ```
+- Failure: 422 if any of the request argument is not present.
+
+`POST '/questions'`
+- Search a question.
+- Request Arguments: An object with 'SearchTerm' - String or Substring of question to search for.
+    ```json
+    {
+      "searchTerm": "title"
+    }
+    ```
+- Returns: An object with , `questions` : List of questions matching the search string, 'total_questions' : total number of questions matching the search string
+    ```json
+    {
+      "questions": [{"What is the recent title wirtten by premchand ?"}],
+      "total_questions": 1
+    }
+    ```
+- Failure: 422 if searchTerm is not present.
+           404 if no questions matching the searchTerm are present.
+
+
+`GET '/categories/<int:category_id>/questions'`
+- Get list of questions based on the category.
+- Request Arguments: Category id in the url.
+- Returns: An object with , `questions` : List of questions in the category, 'total_questions' : total number of questions in the category, 'current_category' - category of the questions
+    ```json
+    {
+      "questions": [{"What is the recent title wirtten by premchand ?"}],
+      "total_questions": 1,
+      "current_category": 1
+    }
+    ```
+- Failure: 404 if no questions are available with the category id.
+
+`POST '/quizzes'`
+- Get a random question.
+- Request Arguments: An object with , 'previous_questions' - List of question id of the previously displayed questions, null for the first time and populated with every run. 'quiz_category' - question category to display questions, if 0 is supplied as the category then random question from all categories is returned.
+    ```json
+    {
+      "previous_questions": [1,2,3],
+      "quiz_category": 1
+    }
+    ```
+- Returns: An object with , `question` : Questions in the category, with dictionary 'id': question id, 'question': question statement, 'answer': answer of the question, 'category': category of the question, 'difficulty': difficulty of the question
+    ```json
+    {
+      "question": {
+            'id': 1,
+            'question': "What is the recent title wirtten by premchand ?",
+            'answer': "Vardan",
+            'category':   1,
+            'difficulty': 5
+            }
+    }
+    ```
+- Failure: 422 if no category id is supplied.
 ### Documentation Example
 
 `GET '/api/v1.0/categories'`
@@ -89,6 +207,7 @@ You will need to provide detailed documentation of your API endpoints including 
   "6": "Sports"
 }
 ```
+
 
 ## Testing
 
