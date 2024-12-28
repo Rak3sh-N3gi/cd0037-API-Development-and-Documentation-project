@@ -6,6 +6,7 @@ from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
+
 def paginate_questions(request, selection):
     page = request.args.get("page", 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
@@ -15,6 +16,7 @@ def paginate_questions(request, selection):
     current_questions = question[start:end]
 
     return current_questions
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -29,7 +31,7 @@ def create_app(test_config=None):
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
-    
+
     with app.app_context():
         db.create_all()
 
@@ -45,7 +47,7 @@ def create_app(test_config=None):
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
         return response
-    
+
     """
     @TODO:
     Create an endpoint to handle GET requests
@@ -79,7 +81,7 @@ def create_app(test_config=None):
     def retrieve_questions():
         selection = Question.query.order_by(Question.id).all()
         current_questions = paginate_questions(request, selection)
-        
+
         if len(current_questions) == 0:
             abort(404)
 
@@ -140,7 +142,8 @@ def create_app(test_config=None):
         if new_question is None or new_answer is None or new_difficulty is None or new_category is None:
             abort(422)
 
-        question = Question(question=new_question, answer=new_answer, difficulty=new_difficulty, category=new_category)
+        question = Question(question=new_question, answer=new_answer,
+                            difficulty=new_difficulty, category=new_category)
         question.insert()
 
         return jsonify(
@@ -167,7 +170,8 @@ def create_app(test_config=None):
         if search_term is None:
             abort(422)
 
-        selection = Question.query.filter(Question.question.ilike(f"%{search_term}%")).all()
+        selection = Question.query.filter(
+            Question.question.ilike(f"%{search_term}%")).all()
         current_questions = paginate_questions(request, selection)
 
         if len(current_questions) == 0:
@@ -189,7 +193,8 @@ def create_app(test_config=None):
     """
     @app.route("/categories/<int:category_id>/questions", methods=["GET"])
     def questionsBasedOnCategories(category_id):
-        selection = Question.query.filter(Question.category==category_id).order_by(Question.id).all()
+        selection = Question.query.filter(
+            Question.category == category_id).order_by(Question.id).all()
         current_questions = paginate_questions(request, selection)
 
         if len(current_questions) == 0:
@@ -226,7 +231,8 @@ def create_app(test_config=None):
         if quiz_category["id"] == 0:
             selection = Question.query.all()
         else:
-            selection = Question.query.filter(Question.category==quiz_category["id"]).all()
+            selection = Question.query.filter(
+                Question.category == quiz_category["id"]).all()
 
         if len(previous_questions) >= len(selection):
             return jsonify(
@@ -252,27 +258,28 @@ def create_app(test_config=None):
     @app.errorhandler(404)
     def not_found(error):
         return (
-            jsonify({"success": False, "error": 404, "message": "Resource not found"}),
+            jsonify({"success": False, "error": 404,
+                    "message": "Resource not found"}),
             404,
         )
 
     @app.errorhandler(422)
     def unprocessable(error):
         return (
-            jsonify({"success": False, "error": 422, "message": "Unprocessable entity"}),
+            jsonify({"success": False, "error": 422,
+                    "message": "Unprocessable entity"}),
             422,
         )
 
     @app.errorhandler(400)
     def bad_request(error):
-        return (jsonify({"success": False, "error": 400, "message": "bad request"}), 
-        400,
-    )
+        return (jsonify({"success": False, "error": 400, "message": "bad request"}),
+                400,
+                )
 
     @app.errorhandler(500)
     def server_error(error):
-        return (jsonify({"success": False, "error": 500, "message": "Server error"}), 
-        400,
-    )
+        return (jsonify({"success": False, "error": 500, "message": "Server error"}),
+                400,
+                )
     return app
-
